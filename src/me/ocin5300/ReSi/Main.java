@@ -11,11 +11,13 @@ public class Main extends Application {
 
 
     public static void main(String[] args) {
+        System.setProperty("prism.lcdtext", "false");
+        System.setProperty("prism.text", "t2k");
         launch(args);
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         Hauptfenster hf = new Hauptfenster();
         Scene sc = new Scene(hf.getView());
         stage.setScene(sc);

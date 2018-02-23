@@ -8,6 +8,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import me.ocin5300.ReSi.gui.hauptfenster.HauptfensterController;
 import me.ocin5300.ReSi.logik.Registermaschine;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -24,7 +25,7 @@ public class MainTester extends Application {
         TableColumn<Registermaschine, Integer> tc = new TableColumn<>("2");
         table.getColumns().addAll(tc);
 
-        Registermaschine registermaschine = new Registermaschine(16);
+        Registermaschine registermaschine = new Registermaschine(new HauptfensterController(), 16);
 
         table.getItems().addAll(registermaschine);
 
@@ -40,7 +41,7 @@ public class MainTester extends Application {
                         tf.setMaxWidth(50);
 
                         fp.setMaxWidth(70);
-                        Bindings.bindBidirectional(tf.textProperty(), registermaschine.getR().get(0), new StringConverter<Number>() {
+                        Bindings.bindBidirectional(tf.textProperty(), registermaschine.getR()[0], new StringConverter<Number>() {
                             @Override
                             public String toString(Number number) {
                                 return number.toString();
@@ -52,7 +53,7 @@ public class MainTester extends Application {
                                 try {
                                     return Integer.parseInt(s);
                                 } catch (NumberFormatException e) {
-                                    return registermaschine.getR().get(0).get();
+                                    return registermaschine.getR()[0].get();
                                 }
                             }
                         });
@@ -68,7 +69,7 @@ public class MainTester extends Application {
             };
         });
         tc.setCellValueFactory((TableColumn.CellDataFeatures<Registermaschine, Integer> registermaschineStringCellDataFeatures) -> {
-            return registermaschineStringCellDataFeatures.getTableView().getItems().get(0).getR().get(0).asObject();
+            return registermaschineStringCellDataFeatures.getTableView().getItems().get(0).getR()[0].asObject();
         });
 
         tc.setMaxWidth(80);

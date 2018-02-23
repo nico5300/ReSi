@@ -1,0 +1,11 @@
+.styled-text-area .currentLine {
+    -rtfx-background-color: #c2cfe6;
+}
+
+.styled-text-area .nothing {
+    -rtfx-background-color: WHITE;
+}
+
+.styled-text-area .error {
+    -rtfx-background-color: RED;
+}
