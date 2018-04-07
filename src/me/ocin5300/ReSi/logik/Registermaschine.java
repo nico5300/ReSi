@@ -1,9 +1,9 @@
 package me.ocin5300.ReSi.logik;
 
 
-import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ObservableValue;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -22,8 +22,10 @@ public class Registermaschine {
     
     private SimpleBooleanProperty ausführendState = new SimpleBooleanProperty(false);
     private Timer timer = null;
+    private SimpleIntegerProperty tickTime = new SimpleIntegerProperty(1000);
+    private SimpleBooleanProperty isTimed = new SimpleBooleanProperty(false);
 
-    RegistermaschinenListener listener;
+    private RegistermaschinenListener listener;
 
 
     public Registermaschine(RegistermaschinenListener listener, int numberOfRegisters) {
@@ -34,11 +36,40 @@ public class Registermaschine {
         }
 
 
+
+        isTimed.addListener(this::determineAutoTick);
+
+        ausführendState.addListener(this::determineAutoTick);
+
     }
+
+
+    private void determineAutoTick(ObservableValue<? extends Boolean> observableValue, Boolean oldVal, Boolean newVal) {
+        if (isTimed.get() & ausführendState.get()) {
+            timer = new Timer("runningTimer", true);
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    if (ausführendState.get())
+                        anweisungAusführen();
+                }
+            }, tickTime.get(), tickTime.get());
+
+
+        } else {
+            if (timer != null)
+                timer.cancel();
+            timer = null;
+        }
+    }
+
+
 
     public void setCode(String code) {
         this.code = code;
     }
+
+
 
     public void reset() {
         for (SimpleIntegerProperty i : R)
@@ -50,8 +81,9 @@ public class Registermaschine {
         anweisungen = null;
     }
 
+
+
     public void prepareAusführung() {
-        ausführendState.set(true);
         Scanner sc = new Scanner(code);
         anweisungen = new ArrayList<>(64);
         listener.updateHighlighting(BZ.get());
@@ -59,55 +91,53 @@ public class Registermaschine {
         while (sc.hasNextLine()) {
             anweisungen.add(sc.nextLine());
         }
+        ausführendState.set(true);
 
     }
 
-    public void startTimer(long millis) {
-        if(!ausführendState.get())
-            return;
 
-        timer = new Timer("runningTimer",true);
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                anweisungAusführen();
-            }
-        }, millis, millis);
-    }
 
-    public void stopTimer() {
-        if(timer != null)
-            timer.cancel();
-        timer = null;
+
+    public SimpleIntegerProperty tickTimeProperty() {
+        return tickTime;
     }
+    
 
     public void einzelschritt() {
         if (ausführendState.get())
             anweisungAusführen();
     }
 
-    public void anweisungAusführen() {
+
+
+
+
+    protected void anweisungAusführen() {
 
         String auszuführendeAnweisung;
+
+
         try {
-            auszuführendeAnweisung = anweisungen.get(BZ.get()).toUpperCase();
+            auszuführendeAnweisung = anweisungen.get(BZ.get()).toUpperCase();   //
         } catch (IndexOutOfBoundsException e) {
-            listener.errorEncountered("FEHLER: Unerwartetes Programmende! You made a CPU cry! Shame on you!", BZ.get());
+            listener.errorEncountered("FEHLER: Unerwartetes Programmende! " +
+                    "You made a CPU cry! Shame on you!", BZ.get());
             ausführendState.set(false);
-            stopTimer();
+            
             return;
         }
         auszuführendeAnweisung  = auszuführendeAnweisung.trim();
 
         if(auszuführendeAnweisung.equals("") || auszuführendeAnweisung.substring(0, 2).equals("--")) {
             BZ.set(BZ.get() + 1);
+            listener.updateHighlighting(BZ.get());
             return;
         }
 
         if(auszuführendeAnweisung.startsWith("END")) {
             System.out.println("------END ENCOUNTERED!!!");
             BZ.set(BZ.get() + 1);
-            stopTimer();
+            
             ausführendState.set(false);
             listener.endEncountered();
             return;
@@ -115,19 +145,23 @@ public class Registermaschine {
 
         if(auszuführendeAnweisung.startsWith("NOP")) {
             BZ.set(BZ.get()+1);
+            listener.updateHighlighting(BZ.get());
+            return;
         }
 
 
         Scanner sc = new Scanner(auszuführendeAnweisung);
         String operation = sc.next();
-        int arg = -1;
+        int arg;
         if(sc.hasNextInt())
             arg = sc.nextInt();
         else {
-            listener.errorEncountered("FEHLER: In Zeile " + BZ.get() + " fehlt der Integer " +
+            listener.errorEncountered("FEHLER: In Zeile " + (BZ.get()+1) + " fehlt der Integer " +
                     "nach der Anweisung. ", BZ.get());
+
             ausführendState.set(false);
-            stopTimer();
+            
+            return;
         }
 
         switch (operation) {
@@ -156,10 +190,18 @@ public class Registermaschine {
                 BZ.set(BZ.get()+1);
                 break;
             case "DIV":
+                if(R[arg-1].get() == 0) {
+                    divBy0();
+                    return;
+                }
                 A.set(A.get() / R[arg-1].get());
                 BZ.set(BZ.get()+1);
                 break;
             case "MOD":
+                if(R[arg-1].get() == 0) {
+                    divBy0();
+                    return;
+                }
                 A.set(A.get() % R[arg-1].get());
                 BZ.set(BZ.get()+1);
                 break;
@@ -206,11 +248,13 @@ public class Registermaschine {
 
                  listener.errorEncountered("FEHLER: In Zeile " + (BZ.get()+1) + ": Unbekanntes Symbol", BZ.get());
                  ausführendState.set(false);
-                 stopTimer();
+                 
                  return;
         }
-        Platform.runLater(() -> listener.updateHighlighting(BZ.get()));
+        listener.updateHighlighting(BZ.get());
     }
+
+
 
 
     public SimpleIntegerProperty[] getR() {
@@ -220,6 +264,17 @@ public class Registermaschine {
     public int getBZ() {
         return BZ.get();
     }
+
+
+
+    private void divBy0() {
+        
+        listener.errorEncountered("LAUFZEITFEHLER: Division durch 0", BZ.get());
+        ausführendState.set(false);
+
+    }
+
+
 
     public SimpleIntegerProperty BZProperty() {
         return BZ;
@@ -232,6 +287,11 @@ public class Registermaschine {
     public SimpleIntegerProperty aProperty() {
         return A;
     }
+
+    public SimpleBooleanProperty isTimedProperty() {
+        return isTimed;
+    }
+
 
 
 }

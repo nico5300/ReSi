@@ -1,0 +1,25 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="seRmS">
+    <output-path>$PROJECT_DIR$/out/artifacts/seRmS</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="me.ocin5300.ReSi.Main" />
+        <option name="description" value="" />
+        <option name="height" value="650" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="nativeBundle" value="all" />
+        <option name="title" value="ReSi -" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
+        <option name="width" value="1000" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="seRmS.jar">
+        <element id="module-output" name="seRmS" />
+      </element>
+      <element id="library" level="project" name="com.airhacks:afterburner.fx:1.7.0" />
+      <element id="library" level="project" name="org.fxmisc.richtext:richtextfx:0.8.1" />
+    </root>
+  </artifact>
+</component>

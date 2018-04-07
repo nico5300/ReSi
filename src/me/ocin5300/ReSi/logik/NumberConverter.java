@@ -35,7 +35,7 @@ public class NumberConverter extends StringConverter<Number> {
                 textField.positionCaret(textField.getText().length());
                 return 0;
             }
-            return Integer.parseInt(s) - difference;
+            return Integer.parseInt(s) - difference  ;
         } catch (NumberFormatException e) {
             throwErrorMessage("Fehlerhafte Eingabe", "Die Eingabe " + s + " ist keine Zahl.\n" +
                     "In dieses Feld dürfen nur\nZahlen eingesetzt werden!");

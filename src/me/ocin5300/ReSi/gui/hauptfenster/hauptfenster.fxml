@@ -463,7 +463,7 @@
                                                 </StackPane>
                                              </children>
                                           </GridPane>
-                                          <Label fx:id="statusLabel" text="ReSi Version 0.0.1, Autor: Nico Greger" GridPane.rowIndex="1">
+                                          <Label fx:id="statusLabel" text="ReSi Version 1.0, Autor: Nico Greger" GridPane.rowIndex="1">
                                              <font>
                                                 <Font size="15.0" />
                                              </font>
@@ -497,7 +497,7 @@
           </Menu>
             <Menu text="Editor">
               <items>
-                  <RadioMenuItem mnemonicParsing="false" selected="true" text="Automatische Adresskorrigierung bei Jumpbefehlen" />
+                  <RadioMenuItem fx:id="menuJumpsAnpassen" mnemonicParsing="false" selected="true" text="Automatische Adresskorrigierung bei Jumpbefehlen" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <MenuItem fx:id="menuEditorRueckgaengigButton" disable="true" mnemonicParsing="false" onAction="#onMenuEditorRueckgaengigClick" text="Rückgängig">
                      <accelerator>
@@ -517,12 +517,12 @@
               <MenuItem fx:id="menuStepButton" mnemonicParsing="false" onAction="#onRSStepButtonClick" text="Nächste Anweisung" />
                   <SeparatorMenuItem mnemonicParsing="false" />
                   <RadioMenuItem fx:id="menuAutomatischAusfuehren" mnemonicParsing="false" onAction="#onAutomatischAusfuehrenClick" text="Automatische Ausführung" />
-                  <MenuItem mnemonicParsing="false" text="Ausführungseinstellungen..." />
+                  <MenuItem mnemonicParsing="false" onAction="#onAusfuehrungseinstellungenClick" text="Ausführungseinstellungen..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Hilfe">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" onAction="#onAboutClick" text="About" />
             </items>
           </Menu>
         </menus>
