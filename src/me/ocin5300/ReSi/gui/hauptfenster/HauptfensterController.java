@@ -39,7 +39,6 @@ public class HauptfensterController implements Initializable, RegistermaschinenL
     private FileChooser fileChooser;
     private Registermaschine registermaschine;
     private ChangeListener<Integer> changeListener;
-    private long timer = 1000; // Wie lang soll zwischen den automatisch ausgeführten Schritten gewartet werden?
 
     @Inject
     HashMap<String, Object> injectionMap;
