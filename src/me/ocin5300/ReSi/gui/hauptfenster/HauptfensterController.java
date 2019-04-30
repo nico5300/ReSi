@@ -525,6 +525,7 @@ public class HauptfensterController implements Initializable, RegistermaschinenL
 
     }
 
+    
 
     //////////////////// DATEI ÖFFNEN ///////////////////////////////////////
 
